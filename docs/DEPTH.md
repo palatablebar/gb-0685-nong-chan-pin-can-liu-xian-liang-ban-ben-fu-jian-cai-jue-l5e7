@@ -13,6 +13,7 @@
 | M5 复检裁决 | 查看并复算复检裁决 | `/api/m5_calculate` | `app/modules/m5_calculate/rules.py` | `tests/test_calculate.py` |
 | M6 批次判级 | 查看并复算批次判级 | `/api/m6_reconcile` | `app/modules/m6_reconcile/compare.py` | `tests/test_reconcile.py` |
 | M7 报告归档 | 查看并复算报告归档 | `/api/m7_archive` | `app/modules/m7_archive/export_out.py` | `tests/test_archive.py` |
+| M8 撤回裁决 | 撤回复验并恢复原始报告为当前依据 | `/api/runs/<id>/withdrawals` | `app/modules/m8_withdrawal/rules.py` | `tests/test_withdrawal.py` |
 
 ## 陷阱登记
 
@@ -32,6 +33,8 @@
 | TRAP-15 | ug/kg与mg/kg | 差1000倍 | 浓度统一mg/kg | `app/modules/m4_segments/rules.py` | `tests/test_segments.py::test_unit_conversion` |
 | TRAP-25 | 标准时间边界 | 双版或错版 | 采样日半开区间选版 | `app/modules/m3_versions/standards.py` | `tests/test_versions.py::test_halfopen_effective` |
 | TRAP-20 | 复检引用环 | 遍历无法结束 | 引用路径检测 | `app/modules/m5_calculate/rules.py` | `tests/test_calculate.py::test_cycle_rejected` |
+| TRAP-27 | 撤回复验后误删或口径分裂 | 抽掉复验直接翻转批次，或沿用失效依据 | 恢复原始报告为当前依据，统一重算并归档撤回结论 | `app/modules/m8_withdrawal/rules.py` | `tests/test_withdrawal.py` |
+| TRAP-28 | 撤回中断与重跑 | 半截写入或重复登记 | 单事务条件更新+回滚，(运行,报告)幂等键不新增记录 | `app/store.py` | `tests/test_withdrawal.py::test_store_rollback_restores_old_conclusion` |
 
 ## 对账规则
 

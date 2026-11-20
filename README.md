@@ -19,6 +19,7 @@ docker compose up --build -d
 - 复检裁决：`/m5_calculate`、`/api/m5_calculate`
 - 批次判级：`/m6_reconcile`、`/api/m6_reconcile`
 - 报告归档：`/m7_archive`、`/api/m7_archive`
+- 撤回裁决：`/m8_withdrawal`、`/api/m8_withdrawal`（`POST /api/runs/<run_id>/withdrawals`）
 
 ## 核心规则
 
@@ -36,3 +37,7 @@ docker compose config --quiet
 ## 数据与限制
 
 SQLite保存在records命名卷，普通重启与构建不会清除。确认可丢弃本项目数据后，运行 `docker compose down -v` 再启动可重置。单文件上限2MB；不接入外部业务系统；历史规则由本项目样例定义，不代表实际行业标准。
+
+## 复验撤回
+
+实验室撤回已入出证包的复验（如限量版本目录改版导致复验依据失效）时，在“撤回裁决”登记报告ID与原因。撤回后以该复验替代的**原始报告**作为当前依据，按采样日有效限量重新判定；样本判断、批次归级与封存口径统一跟随撤回结论重算。撤回为单事务：处理中断整体回滚恢复旧版结论；同一撤回（运行+报告）重跑幂等，不新增记录；原始与撤回报告均保留留痕，结论随证据CSV以“撤回”行归档。

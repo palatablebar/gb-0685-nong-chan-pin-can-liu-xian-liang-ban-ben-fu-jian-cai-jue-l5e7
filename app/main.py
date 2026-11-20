@@ -33,6 +33,9 @@ def create_app():
     @app.get('/api/archive/<run_id>/export.csv')
     def download(run_id):
         state=store.get(run_id)
+        if state.get('withdrawals'):
+            from app.modules.m8_withdrawal.rules import replay
+            state=replay(state)
         if not state.get('reconcile',{}).get('balanced'):raise DomainError('UNBALANCED','对账未平')
         return Response(bundle(state),mimetype='text/csv; charset=utf-8',headers={'Content-Disposition':'attachment; filename=evidence.csv'})
     with app.app_context():

@@ -8,6 +8,8 @@ def bundle(state):
     writer.writerow(['对账',rid,'','','',json.dumps(state.get('reconcile',{}),ensure_ascii=False,sort_keys=True)])
     for row in state.get('calculations',[]):writer.writerow(['计算',rid,row.get('line',''),row.get('id',''),row.get('code',''),json.dumps(row,ensure_ascii=False,sort_keys=True)])
     for row in state['quarantine']:writer.writerow(['隔离',rid,row['line'],row.get('id',''),row['code'],json.dumps(row.get('raw',{}),ensure_ascii=False,sort_keys=True)])
+    # 撤回处理结论随证据包归档；被撤回复验与原始报告的采信记录均保留在计算/隔离留痕中。
+    for row in state.get('withdrawals',[]):writer.writerow(['撤回',rid,'',row.get('report_id',''),row.get('reason',''),json.dumps(row,ensure_ascii=False,sort_keys=True)])
     return '\ufeff'+out.getvalue()
 
 def checksum(state):
